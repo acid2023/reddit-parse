@@ -34,7 +34,8 @@ for idx, submission in enumerate(submissions):
     submission_comments_list = []
     submission_comments_list = getting_comments_from_submission(submission)
     query_comments_list += submission_comments_list
-    print(f'Retrieved {len(submission_comments_list):<4}\tcomments from submission {idx+1} / {total:<3},\t total comments\t {len(query_comments_list):>6}')
+    print(f'Retrieved {len(submission_comments_list):<4}\tcomments from submission {idx+1} / {total:<3},',
+          f'\t total comments\t {len(query_comments_list):>6}')
 
 print('All submissions parsed')
 print('Total comments retrieved: ', len(query_comments_list))
