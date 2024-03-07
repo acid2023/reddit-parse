@@ -1,26 +1,16 @@
-from datetime import datetime, timedelta
 from tabulate import tabulate
 
-from praw.models import Comment, Submission, Redditor  # type: ignore
+from praw.models import Comment, Submission  # type: ignore
 
-
-def get_cut_timestamp(days_period: int) -> int:
-    current_time = datetime.utcnow()
-    days_ago = current_time - timedelta(days=days_period)
-    return int(days_ago.timestamp())
+from praw_utils import substitute_athor_name
 
 
 def get_top_authors_counts(instances_list: list[Submission | Comment], key: str) -> dict[str, int]:
-    def substitute_athor_name(author: Redditor | str) -> str:
-        if isinstance(author, Redditor):
-            return author.name
-        else:
-            return author
 
     counts_dict: dict[str, int] = {}
 
     for instance in instances_list:
-        redditor = getattr(instance, key)
+        redditor = getattr(instance, key, None)
         author = substitute_athor_name(redditor)
         if author is None:
             continue
@@ -32,10 +22,10 @@ def get_top_authors_counts(instances_list: list[Submission | Comment], key: str)
     return sorted_counts_dict
 
 
-def print_fancy_top(count_dict: dict[str, int], top_num: int) -> None:
+def get_fancy_top_table(count_dict: dict[str, int], top_num: int, header: str) -> str:
     total_lines = len(count_dict)
     if top_num > total_lines:
         top_num = total_lines
 
     table_data = [[key, value] for key, value in count_dict.items()][:top_num]
-    print(tabulate(table_data, headers=['Name', 'Count'], tablefmt="fancy_grid"))
+    return tabulate(table_data, headers=[header, 'Count'], tablefmt="fancy_grid")
